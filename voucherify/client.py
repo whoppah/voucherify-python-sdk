@@ -22,7 +22,7 @@ class VoucherifyRequest(object):
             'Content-Type': 'application/json'
         }
 
-    def request(self, path, method='GET', **kwargs):
+    def request(self, path, method='GET', include_remaining=False, **kwargs):
         try:
             url = self.url + path
 
@@ -42,6 +42,9 @@ class VoucherifyRequest(object):
             result = response.json()
         else:
             result = response.text
+
+        if include_remaining:
+            return result, response.headers.get('X-Rate-Limit-Remaining')
 
         return result
 
@@ -195,13 +198,14 @@ class Distributions(VoucherifyRequest):
     def __init__(self, *args, **kwargs):
         super(Distributions, self).__init__(*args, **kwargs)
 
-    def publish(self, params):
+    def publish(self, params, include_remaining=False):
         path = '/vouchers/publish'
 
         return self.request(
             path,
             method='POST',
-            data=json.dumps(params)
+            data=json.dumps(params),
+            include_remaining=include_remaining
         )
 
 
