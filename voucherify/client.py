@@ -44,7 +44,7 @@ class VoucherifyRequest(object):
             result = response.text
 
         if include_remaining:
-            return result, response.headers.get('X-Rate-Limit-Remaining')
+            return result, int(response.headers.get('X-Rate-Limit-Remaining'))
 
         return result
 
